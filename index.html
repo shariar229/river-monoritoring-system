@@ -30,7 +30,11 @@
       margin-bottom: 30px;
     }
 
-    .highlight{
+    td {
+      text-align: right;
+    }
+
+    .highlight {
       color: red;
       font-weight: bold;
     }
@@ -51,6 +55,7 @@
     <table class="table" id="table">
       <thead class="thead-light">
         <tr>
+          <th scope="col">#</th>
           <th scope="col">pH</th>
           <th scope="col">Turbidity</th>
           <th scope="col">Temperature</th>
@@ -61,35 +66,37 @@
       </thead>
       <tbody>
 
-        <tr v-for="item in items">
+        <tr v-for="(item, i) in items">
+          <td> {{ i + 1 }} </td>
           <td :class="{'highlight': item.ph > ST_VALUE.ph}"> {{ item.ph }} </td>
           <td :class="{'highlight': item.turbidity > ST_VALUE.turbidity}"> {{ item.turbidity }} </td>
           <td :class="{'highlight': item.temp > ST_VALUE.temp}"> {{ item.temp }} </td>
           <td :class="{'highlight': item.tds > ST_VALUE.tds}"> {{ item.tds }} </td>
         </tr>
 
-        <tr id="inputRow" v-if="isAdmin">
+        <tr v-if="isAdmin">
+          <td></td>
           <td>
-            <input type="text" v-model="newItem.ph">
+            <input type="text" class="form-control" v-model="newItem.ph">
           </td>
           <td>
-            <input type="text" v-model="newItem.turbidity">
+            <input type="text" class="form-control" v-model="newItem.turbidity">
           </td>
           <td>
-            <input type="text" v-model="newItem.temp">
+            <input type="text" class="form-control" v-model="newItem.temp">
           </td>
           <td>
-            <input type="text" v-model="newItem.tds">
+            <input type="text" class="form-control" v-model="newItem.tds">
           </td>
           <td>
-            <button @click="insertData()">Add</button>
+            <button class="btn btn-primary" @click="insertData()">Add</button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <script src="https://unpkg.com/vue@3"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.37/vue.global.min.js"></script>
 
   <script type="module">
     // Import the functions you need from the SDKs you need
@@ -142,19 +149,9 @@
         }
 
         const insertData = () => {
-          const row = document.querySelector('#inputRow')
-          const params = row.querySelectorAll('td input')
-          const data = {}
-
-          for (let index = 0; index < params.length; index++) {
-            const element = params[index];
-            const key = element.getAttribute('name')
-            const value = element.value ? element.value : '--'
-            data[key] = value
-          }
-
+          console.log(newItem.value)
           const newPostKey = push(child(ref(database), 'qualities')).key
-          set(ref(database, 'qualities/' + newPostKey), data)
+          set(ref(database, 'qualities/' + newPostKey), newItem)
         }
 
         const deleteData = (id) => {
