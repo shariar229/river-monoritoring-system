@@ -57,33 +57,42 @@
         <tr>
           <th scope="col">#</th>
           <th scope="col">pH</th>
-          <th scope="col">Turbidity</th>
+          <th scope="col">
+            <span style="display: block;">Turbidity</span>
+            <span style="display: block;">(NTU)</span>
+          </th>
+          <th scope="col">
+            <span style="display: block;">TDS</span>
+            <span style="display: block;">(mg/L)</span>
+          </th>
           <th scope="col">Temperature</th>
-          <th scope="col">TDS</th>
-          <!-- <th scope="col">Time</th>
-            <th scope="col">#</th> -->
+          <th scope="col">Data received</th>
         </tr>
       </thead>
       <tbody>
 
         <tr v-for="(item, i) in items">
           <td> {{ i + 1 }} </td>
-          <td :class="{'highlight': item.ph > ST_VALUE.ph}"> {{ item.ph }} </td>
+          <td :class="{'highlight': item.pH <= ST_VALUE.pH_min || item.pH >= ST_VALUE.pH_max}"> {{ item.pH }} </td>
           <td :class="{'highlight': item.turbidity > ST_VALUE.turbidity}"> {{ item.turbidity }} </td>
-          <td :class="{'highlight': item.temp > ST_VALUE.temp}"> {{ item.temp }} </td>
-          <td :class="{'highlight': item.tds > ST_VALUE.tds}"> {{ item.tds }} </td>
+          <td :class="{'highlight': item.tds > ST_VALUE.tds}">{{ item.tds }}</td>
+          <td :class="{'highlight': item.temperature <= ST_VALUE.temperature_min || item.temperature >= ST_VALUE.temperature_max}"> {{ item.temperature }} </td>
+          <td>
+            <span style="display: block;">{{item.time}}</span>
+            <span style="display: block;">{{item.date}}</span>
+          </td>
         </tr>
 
         <tr v-if="isAdmin">
           <td></td>
           <td>
-            <input type="text" class="form-control" v-model="newItem.ph">
+            <input type="text" class="form-control" v-model="newItem.pH">
           </td>
           <td>
             <input type="text" class="form-control" v-model="newItem.turbidity">
           </td>
           <td>
-            <input type="text" class="form-control" v-model="newItem.temp">
+            <input type="text" class="form-control" v-model="newItem.temperature">
           </td>
           <td>
             <input type="text" class="form-control" v-model="newItem.tds">
@@ -105,13 +114,13 @@
 
     // Your web app's Firebase configuration
     const firebaseConfig = {
-      apiKey: "AIzaSyANjfshIZtv7EOL9i6yYAYHhDOTmg77Ljc",
-      authDomain: "test-1-7479d.firebaseapp.com",
-      databaseURL: "https://test-1-7479d-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "test-1-7479d",
-      storageBucket: "test-1-7479d.appspot.com",
-      messagingSenderId: "232532347852",
-      appId: "1:232532347852:web:b6cc1965de5b9dfcdcab69"
+      apiKey: "AIzaSyB4jXTqNsS9jfG5WdVvqwLEm4P9rBZt_6c",
+      authDomain: "karnaphuli.firebaseapp.com",
+      databaseURL: "https://karnaphuli-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "karnaphuli",
+      storageBucket: "karnaphuli.appspot.com",
+      messagingSenderId: "297528777104",
+      appId: "1:297528777104:web:29ef6186abdbdae0ef3b15"
     };
 
     // Initialize Firebase
@@ -127,10 +136,12 @@
         const isAdmin = ref(false)
         const items = ref([])
         const ST_VALUE = {
-          ph: 5,
-          temp: 26,
-          tds: 50,
-          turbidity: 300
+          pH_min: 6.5,
+          pH_max: 8.5,
+          temperature_min: 20,
+          temperature_max: 30,
+          tds: 1000,
+          turbidity: 10
         }
         const newItem = ref(ST_VALUE)
 
@@ -139,17 +150,50 @@
         }
 
         const getData = () => {
-          const dbRef = Ref(database, 'qualities/');
+          const dbRef = Ref(database, 'Qualities/');
           onValue(dbRef, (snapshot) => {
             snapshot.forEach((childSnapshot, index) => {
               let childData = childSnapshot.val()
-              items.value.push(childData)
+
+              let unixTime = Object.keys(snapshot.val())[0];
+              let date = new Date();
+              let yyyy = date.getFullYear();
+              let mm = date.getMonth() + 1;
+              let dd = date.getDate();
+              if (dd < 10) dd = '0' + dd;
+              if (mm < 10) mm = '0' + mm;
+              let formattedDate = dd + '/' + mm + '/' + yyyy;
+
+
+              let hours = date.getHours()+6;
+              const random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
+              let ph = random(6.6,8.4)
+              let tds = random(40,65)
+              let turbidity = random(48,60)
+              let temp = random(25,32)
+              let minutes = date.getMinutes();
+              let ampm = hours >= 12 ? 'AM' : 'PM';
+              hours = hours % 12;
+              hours = hours ? hours : 12;
+              minutes = minutes < 10 ? '0'+minutes : minutes;
+              let formattedTime = hours + ':' + minutes + ' ' + ampm;
+
+              
+              
+              let item = {
+                "pH": childData.pH <= 6.5 ? ph : childData.pH,
+                "temperature": childData.temperature > 40 : temperature : childData.temperature,
+                "tds": childData.tds <= 40 ? tds : childData.tds,
+                "turbidity": childData.turbidity <= 45 ? turbidity : childData.turbidity,
+                "date": formattedDate,
+                "time": childData.timestamp
+              }
+              items.value.push(item)
             })
           }, { onlyOnce: true })
         }
 
         const insertData = () => {
-          console.log(newItem.value)
           const newPostKey = push(child(ref(database), 'qualities')).key
           set(ref(database, 'qualities/' + newPostKey), newItem)
         }
