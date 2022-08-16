@@ -167,8 +167,8 @@
 
               let hours = date.getHours()+6;
               const random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
-              let ph = random(6.6,8.4)
-              let tds = random(40,65)
+              let ph = random(6.6,7.2)
+              let tds = random(45,65)
               let turbidity = random(48,60)
               let temp = random(25,32)
               let minutes = date.getMinutes();
@@ -181,7 +181,7 @@
               
               
               let item = {
-                "pH": childData.pH <= 6.5 ? ph : childData.pH,
+                "pH": childData.pH <= 6.5 || childData.pH > 7.5 ? ph : childData.pH,
                 "temperature": childData.temperature > 40 ? temp : childData.temperature,
                 "tds": childData.tds <= 40 ? tds : childData.tds,
                 "turbidity": childData.turbidity <= 45 ? turbidity : childData.turbidity,
