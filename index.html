@@ -38,7 +38,7 @@
       <img
         src="https://www.google.com/maps/vt/data=OlPAsXARmIUJ7luw5T14JyR7pBcJRgyj6HkMdHtjdJkbm1CTb4HDQtUwyii_O2Te82AIlGnoORp7QyFOQmOB3hyh8ZPT5fr4ZnM18ihI3cqtFD_azVZQqQxtIQkYYupQa_WUAoSlbf3_V5S64xc49GvlaqZ_BO4Nzw6JMIzzk_l4iRS4TN-ppjiiKTiTS1TujZ8mYRZkdiDYr2bA9UZk8PMEyIfhgzjgGJrU_KwLk_brwPCrkSh3FyL9">
     </a>
-    <table class="table" id="table">
+    <table class="table table-bordered" id="table">
       <thead class="thead-light">
         <tr>
           <th scope="col">#</th>
@@ -150,6 +150,7 @@
                 "date": formattedDate,
                 "time": childData.timestamp
               }
+
               items.value.push(item)
             })
           }, { onlyOnce: true })
