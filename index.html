@@ -58,10 +58,10 @@
       <tbody>
         <tr v-for="(item, i) in items">
           <td> {{ i + 1 }} </td>
-          <td :class="{'highlight': item.pH <= ST_VALUE.pH_min || item.pH >= ST_VALUE.pH_max}"> {{ item.pH }} </td>
+          <td :class="{'highlight': item.pH < ST_VALUE.pH_min || item.pH > ST_VALUE.pH_max}"> {{ item.pH }} </td>
           <td :class="{'highlight': item.turbidity > ST_VALUE.turbidity}"> {{ item.turbidity }} </td>
           <td :class="{'highlight': item.tds > ST_VALUE.tds}">{{ item.tds }}</td>
-          <td :class="{'highlight': item.temperature <= ST_VALUE.temperature_min || item.temperature >= ST_VALUE.temperature_max}"> {{ item.temperature }} </td>
+          <td :class="{'highlight': item.temperature < ST_VALUE.temperature_min || item.temperature > ST_VALUE.temperature_max}"> {{ item.temperature }} </td>
           <td>
             <span style="display: block;">{{item.time}}</span>
             <span style="display: block;">{{item.date}}</span>
