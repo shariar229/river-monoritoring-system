@@ -130,27 +130,18 @@
               let childData = childSnapshot.val()
 
               let unixTime = Object.keys(snapshot.val())[0];
-              let date = new Date();
-              let yyyy = date.getFullYear();
-              let mm = date.getMonth() + 1;
-              let dd = date.getDate();
-              if (dd < 10) dd = '0' + dd;
-              if (mm < 10) mm = '0' + mm;
-              let formattedDate = dd + '/' + mm + '/' + yyyy;
+              let myDate = new Date(unixTime*1000);
+              let dateVals = myDate.toLocaleString().split(',')
+              let formattedDate = dateVals[0]
+              let formattedTime = dateVals[1]
+              console.log(formattedDate, formattedTime)
 
-
-              let hours = date.getHours()+6;
               let random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
               let ph = random(65,75)/10
               let tds = random(45,65)
               let turbidity = random(48,62)
               let temp = random(25,40)
-              let minutes = date.getMinutes();
-              let ampm = hours >= 12 ? 'AM' : 'PM';
-              hours = hours % 12;
-              hours = hours ? hours : 12;
-              minutes = minutes < 10 ? '0'+minutes : minutes;
-              let formattedTime = hours + ':' + minutes + ' ' + ampm;
+
               let item = {
                 "pH": childData.pH <= 6.5 || childData.pH > 7.5 ? ph : childData.pH,
                 "temperature": childData.temperature > 45 ? temp : childData.temperature,
@@ -163,19 +154,11 @@
             })
           }, { onlyOnce: true })
         }
-
         const insertData = () => {
           const newPostKey = push(child(ref(database), 'qualities')).key
           set(ref(database, 'qualities/' + newPostKey), newItem)
         }
-
-        const deleteData = (id) => {
-          console.log(id);
-          // remove(Ref(database, 'qualities/' + id)).then(() => console.log('deleted')).then((error) => console.log(error))
-        }
-
         getData()
-
         return {
           isAdmin,
           items,
@@ -185,10 +168,7 @@
         }
       }
     }).mount('#app')
-
     document.querySelector('#app').classList.remove('d-none')
-
   </script>
 </body>
-
 </html>
