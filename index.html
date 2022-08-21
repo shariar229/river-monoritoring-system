@@ -129,7 +129,7 @@
             snapshot.forEach((childSnapshot, index) => {
               let childData = childSnapshot.val()
 
-              let unixTime = Object.keys(snapshot.val())[0];
+              let unixTime = childData['date'] ? +childData['date'] : Object.keys(snapshot.val())[0];
               let myDate = new Date(unixTime*1000);
               let dateVals = myDate.toLocaleString().split(',')
               let formattedDate = dateVals[0]
