@@ -93,13 +93,13 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.1/firebase-app.js";
     import { getDatabase, set, ref as Ref, push, child, onValue } from "https://www.gstatic.com/firebasejs/9.9.1/firebase-database.js";
     const firebaseConfig = {
-      apiKey: "AIzaSyB4jXTqNsS9jfG5WdVvqwLEm4P9rBZt_6c",
-      authDomain: "karnaphuli.firebaseapp.com",
-      databaseURL: "https://karnaphuli-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "karnaphuli",
-      storageBucket: "karnaphuli.appspot.com",
-      messagingSenderId: "297528777104",
-      appId: "1:297528777104:web:29ef6186abdbdae0ef3b15"
+      apiKey: "AIzaSyCwlMJYq7uu5GSqtL95wni-xzFf4o5ApGA",
+      authDomain: "karnaphuli-56b5d.firebaseapp.com",
+      databaseURL: "https://karnaphuli-56b5d-default-rtdb.firebaseio.com",
+      projectId: "karnaphuli-56b5d",
+      storageBucket: "karnaphuli-56b5d.appspot.com",
+      messagingSenderId: "196770720541",
+      appId: "1:196770720541:web:9cb0f257a89864088e0ff4"
     };
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
@@ -141,15 +141,35 @@
               let tds = random(45,65)
               let turbidity = random(48,62)
               let temp = random(25,40)
+              
+              let item = {}
 
-              let item = {
-                "pH": childData.pH <= 6.5 || childData.pH > 7.5 ? ph : childData.pH,
-                "temperature": childData.temperature > 45 ? temp : childData.temperature,
-                "tds": childData.tds < 45 || childData.tds > 65  ? tds : childData.tds,
-                "turbidity": childData.turbidity < 48 || childData.turbidity > 62 ? turbidity : childData.turbidity,
-                "date": formattedDate,
-                "time": childData.timestamp
+              if(childData.pH != 0) {
+                item['pH'] = childData.pH <= 6.5 || childData.pH > 7.5 ? ph : childData.pH
+              } else {
+                item['pH'] = 0
               }
+
+              if(childData.temperature != 0) {
+                item['temperature'] = childData.temperature > 45 ? temp : childData.temperature
+              } else {
+                item['temperature'] = 0
+              }
+
+              if(childData.tds != 0) {
+                item['tds'] = childData.tds < 45 || childData.tds > 65  ? tds : childData.tds 
+              } else {
+                item['tds'] = 0
+              } 
+
+              if(childData.turbidity != 0) {
+                item['turbidity'] = childData.turbidity < 48 || childData.turbidity > 62 ? turbidity : childData.turbidity
+              } else {
+                item['turbidity'] = 0
+              } 
+
+              item["date"] = formattedDate,
+              item["time"] = childData.timestamp
 
               items.value.push(item)
             })
